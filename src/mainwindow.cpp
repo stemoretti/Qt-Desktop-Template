@@ -62,8 +62,13 @@ void MainWindow::showSettings()
     label->setText(tr("Language (requires restart):"));
 
     auto select = new QComboBox;
-    for (const auto &lang : Utils::languages())
-        select->addItem(QLocale::languageToString(QLocale(lang).language()), lang);
+    for (const auto &lang : Utils::languages()) {
+        auto locale = QLocale(lang);
+        QString displayString(QLocale::languageToString(locale.language()));
+        if (lang.contains("_"))
+            displayString += " (" + QLocale::countryToString(locale.country()) + ")";
+        select->addItem(displayString, lang);
+    }
     select->setCurrentIndex(select->findData(settings.value("language").toString()));
 
     auto buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
