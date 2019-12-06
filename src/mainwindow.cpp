@@ -21,18 +21,22 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::showSettings);
-    connect(ui->actionAbout, &QAction::triggered, this, [this] () {
-        QMessageBox::about(this, tr("About %1").arg(PROJECT_NAME),
-                           tr("<b>%1 %2</b>"
-                              "<p>A template for creating Qt-based desktop applications.</p>"
-                              "<p>See <a href='https://github.com/stemoretti/qt-desktop-template'>"
-                              "github.com/stemoretti/qt-desktop-template</a> for more "
-                              "informations.</p>"
-                              "<p>Copyright &copy; 2019 Stefano Moretti <a "
-                              "href='mailto:stemoretti@gmx.com'>stemoretti@gmx.com</a></p>"
-                              ).arg(PROJECT_NAME).arg(PROJECT_VERSION));
+    connect(ui->actionAbout, &QAction::triggered, this, [this]() {
+        QMessageBox::about(
+            this,
+            tr("About %1").arg(PROJECT_NAME),
+            tr("<b>%1 %2</b>"
+               "<p>A template for creating Qt-based desktop applications.</p>"
+               "<p>See <a href='https://github.com/stemoretti/qt-desktop-template'>"
+               "github.com/stemoretti/qt-desktop-template</a> for more "
+               "informations.</p>"
+               "<p>Copyright &copy; 2019 Stefano Moretti <a "
+               "href='mailto:stemoretti@gmx.com'>stemoretti@gmx.com</a></p>")
+                .arg(PROJECT_NAME)
+                .arg(PROJECT_VERSION)
+        );
     });
-    connect(ui->actionAbout_Qt, &QAction::triggered, this, [this] () {
+    connect(ui->actionAbout_Qt, &QAction::triggered, this, [this]() {
         QMessageBox::aboutQt(this);
     });
 
@@ -63,7 +67,7 @@ void MainWindow::showSettings()
 
     auto select = new QComboBox;
     for (const auto &lang : Utils::languages()) {
-        auto locale = QLocale(lang);
+        QLocale locale(lang);
         QString displayString(QLocale::languageToString(locale.language()));
         if (lang.contains("_"))
             displayString += " (" + QLocale::countryToString(locale.country()) + ")";
@@ -81,7 +85,7 @@ void MainWindow::showSettings()
     dialog->layout()->addWidget(buttons);
 
     int dialogResult = dialog->exec();
-    auto data = select->currentData();
+    QVariant data = select->currentData();
 
     delete dialog;
 

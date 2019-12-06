@@ -49,22 +49,22 @@
         <translation>Informazioni su Qt</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="25"/>
+        <location filename="../src/mainwindow.cpp" line="27"/>
         <source>About %1</source>
         <translation>Informazioni su %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="26"/>
+        <location filename="../src/mainwindow.cpp" line="28"/>
         <source>&lt;b&gt;%1 %2&lt;/b&gt;&lt;p&gt;A template for creating Qt-based desktop applications.&lt;/p&gt;&lt;p&gt;See &lt;a href=&apos;https://github.com/stemoretti/qt-desktop-template&apos;&gt;github.com/stemoretti/qt-desktop-template&lt;/a&gt; for more informations.&lt;/p&gt;&lt;p&gt;Copyright &amp;copy; 2019 Stefano Moretti &lt;a href=&apos;mailto:stemoretti@gmx.com&apos;&gt;stemoretti@gmx.com&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;b&gt;%1 %2&lt;/b&gt;&lt;p&gt;Un modello per creare applicazioni Qt per desktop.&lt;/p&gt;&lt;p&gt;Vai su &lt;a href=&apos;https://github.com/stemoretti/qt-desktop-template&apos;&gt;github.com/stemoretti/qt-desktop-template&lt;/a&gt; per più informazioni.&lt;/p&gt;&lt;p&gt;Copyright &amp;copy; 2019 Stefano Moretti &lt;a href=&apos;mailto:stemoretti@gmx.com&apos;&gt;stemoretti@gmx.com&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="59"/>
+        <location filename="../src/mainwindow.cpp" line="63"/>
         <source>Settings</source>
         <translation>Impostazioni</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="62"/>
+        <location filename="../src/mainwindow.cpp" line="66"/>
         <source>Language (requires restart):</source>
         <translation>Lingua (richiede riavvio):</translation>
     </message>

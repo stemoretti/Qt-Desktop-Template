@@ -13,8 +13,9 @@ QString resourcePath(const QString &path)
 {
     QDir directory(QCoreApplication::applicationDirPath());
 
-    if (directory.cd(path) || directory.cd(QDir(path).dirName()) ||
-        (directory.cdUp() && directory.cd(path)))
+    if (directory.cd(path) // when run on Windows
+        || directory.cd(QDir(path).dirName()) // when run inside the build directory
+        || (directory.cdUp() && directory.cd(path))) // when run on Linux
         return directory.absolutePath();
 
     return QString();

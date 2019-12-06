@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     QSettings settings;
-    QString lang(QLocale().name());
+    QString lang(QLocale::system().name());
     if (!settings.value("language").toString().isEmpty())
         lang = settings.value("language").toString();
     else if (Utils::languages().contains(lang))
@@ -31,12 +31,10 @@ int main(int argc, char *argv[])
     QTranslator qtTranslator;
     QTranslator translator;
     if (lang != "en_US") {
-        if (qtTranslator.load(QLocale(lang), "qt", "_",
-                              QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+        if (qtTranslator.load(QLocale(lang), "qt", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
             app.installTranslator(&qtTranslator);
 
-        if (translator.load(QLocale(lang), "qt-desktop-template", "_",
-                            Utils::resourcePath(TRANSLATIONS_PATH)))
+        if (translator.load(QLocale(lang), PROJECT_NAME, "_", Utils::resourcePath(TRANSLATIONS_PATH)))
             app.installTranslator(&translator);
     }
 

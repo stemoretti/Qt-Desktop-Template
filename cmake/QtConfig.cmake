@@ -132,7 +132,6 @@ endif()
 # Linker options
 set(DEFAULT_LINKER_OPTIONS)
 
-# Use pthreads on mingw and linux
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(DEFAULT_LINKER_OPTIONS ${DEFAULT_LINKER_OPTIONS}
     )

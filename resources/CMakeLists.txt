@@ -2,8 +2,8 @@ if(UNIX)
     install(FILES
         qt-desktop-template.desktop
         DESTINATION "${INSTALL_SHARE}/applications"
-        COMPONENT runtime
+        COMPONENT desktop
     )
 endif()
 
-install(DIRECTORY icons DESTINATION "${INSTALL_SHARE}" COMPONENT runtime)
+install(DIRECTORY icons DESTINATION "${INSTALL_SHARE}" COMPONENT desktop)
