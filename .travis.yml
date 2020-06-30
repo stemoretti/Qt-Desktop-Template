@@ -8,7 +8,7 @@ before_install:
   - sudo apt-get update
 
 install:
-  - sudo apt-get install -qy qt512base cmake libgtk-3-0
+  - sudo apt-get install -qy qt512base cmake libgtk-3-0 mesa-common-dev
   - source /opt/qt512/bin/qt512-env.sh
 
 env:
