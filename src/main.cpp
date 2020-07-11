@@ -21,12 +21,13 @@ int main(int argc, char *argv[])
 
     QSettings settings;
     QString lang(QLocale::system().name());
-    if (!settings.value("language").toString().isEmpty())
+    if (settings.value("language").isValid()) {
         lang = settings.value("language").toString();
-    else if (Utils::languages().contains(lang))
+    } else {
+        if (!Utils::languages().contains(lang))
+            lang = "en_US";
         settings.setValue("language", lang);
-    else
-        lang = "en_US";
+    }
 
     QTranslator qtTranslator;
     QTranslator translator;
