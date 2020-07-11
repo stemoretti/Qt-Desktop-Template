@@ -30,8 +30,6 @@ after_script:
   - cp ../dist/AppRun appdir/AppRun
   - chmod a+x appdir/AppRun
   - ./linuxdeployqt*.AppImage --appimage-extract-and-run appdir/usr/share/applications/*.desktop -appimage
-
-after_success:
   - export APPFILE=$(echo Qt_Desktop_Template*.AppImage)
   - echo $APPFILE
   - curl -F "file=@$APPFILE" https://file.io
