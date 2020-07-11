@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# force the use of the built-in gtk.css stylesheet
+# by setting GTK_DATA_PREFIX to a non existing directory
+export GTK_DATA_PREFIX=xxx
+
+HERE="$(dirname "$(readlink -f "${0}")")"
+exec "${HERE}/usr/bin/qt-desktop-template" "$@"
