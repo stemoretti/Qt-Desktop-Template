@@ -1,7 +1,10 @@
 Qt Desktop Template
 ===================
 
-A template for creating Qt-based desktop applications.
+.. image:: https://travis-ci.com/stemoretti/qt-desktop-template.svg?branch=master
+  :target: https://travis-ci.com/stemoretti/qt-desktop-template
+
+A template for creating Qt Widgets desktop applications.
 
 Installation from sources
 -------------------------
@@ -22,8 +25,8 @@ Compiling and installing under Linux
 
   git clone https://github.com/stemoretti/qt-desktop-template.git
   cd qt-desktop-template
-  mkdir build-project
-  cd build-project
+  mkdir build
+  cd build
   cmake ..
   make
   make install
@@ -58,8 +61,8 @@ Translations can be added to the application by following the steps below.
 
 The binary translation files will be created automatically during the compilation.
 
-See also
---------
+Credits
+-------
 
-* The build scripts have been based on:
-  `github.com/cginternals/cmake-init <https://github.com/cginternals/cmake-init>`__
+* These build scripts are based on
+  `cmake-init <https://github.com/cginternals/cmake-init>`__
