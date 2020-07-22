@@ -27,7 +27,7 @@ QStringList languages()
     QStringList languages("en_US");
 
     if (translationsDir.exists()) {
-        QStringList translations = translationsDir.entryList({"*.qm"});
+        QStringList translations = translationsDir.entryList({ "*.qm" });
         translations.replaceInStrings(QRegularExpression("[^_]+_(\\w+)\\.qm"), "\\1");
         languages.append(translations);
         languages.sort();

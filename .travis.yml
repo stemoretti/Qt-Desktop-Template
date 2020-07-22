@@ -21,8 +21,8 @@ script:
   - make
   - make DESTDIR=appdir install
 
-after_script:
-  - wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+after_success:
+  - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   - chmod a+x linuxdeployqt*.AppImage
   - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
   - ./linuxdeployqt*.AppImage --appimage-extract-and-run appdir/usr/share/applications/*.desktop -bundle-non-qt-libs -extra-plugins=iconengines,platformthemes/libqgtk3.so
@@ -30,6 +30,4 @@ after_script:
   - cp ../dist/AppRun appdir/AppRun
   - chmod a+x appdir/AppRun
   - ./linuxdeployqt*.AppImage --appimage-extract-and-run appdir/usr/share/applications/*.desktop -appimage
-  - export APPFILE=$(echo Qt_Desktop_Template*.AppImage)
-  - echo $APPFILE
-  - curl -F "file=@$APPFILE" https://file.io
+  - curl -F "file=@Qt_Desktop_Template-$VERSION-x86_64.AppImage" https://file.io

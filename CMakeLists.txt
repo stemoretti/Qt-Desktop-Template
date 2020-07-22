@@ -4,6 +4,10 @@ project(qt-desktop-template VERSION 0.1.0 LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+if(CMAKE_VERSION VERSION_LESS "3.7.0")
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+endif()
+
 option(BUILD_TESTS "Build the tests" OFF)
 
 include(BuildType)
