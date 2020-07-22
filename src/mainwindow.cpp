@@ -73,7 +73,12 @@ void MainWindow::showSettings()
             displayString += " (" + QLocale::countryToString(locale.country()) + ")";
         select->addItem(displayString, lang);
     }
-    select->setCurrentIndex(select->findData(settings.value("language").toString()));
+
+    QString lang = settings.value("language").toString();
+    int index = select->findData(lang);
+    if (index == -1)
+        index = select->findData(lang.left(2));
+    select->setCurrentIndex(index);
 
     auto buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     connect(buttons, &QDialogButtonBox::accepted, dialog, &QDialog::accept);
