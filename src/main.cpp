@@ -24,7 +24,8 @@ int main(int argc, char *argv[])
     if (settings.value("language").isValid()) {
         lang = settings.value("language").toString();
     } else {
-        if (!Utils::languages().contains(lang))
+        QStringList languages = Utils::languages();
+        if (!languages.contains(lang) && !languages.contains(lang.left(2)))
             lang = "en_US";
         settings.setValue("language", lang);
     }
