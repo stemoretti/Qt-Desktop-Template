@@ -27,7 +27,7 @@ else()
     set(INSTALL_BIN          ".")
     set(INSTALL_DOC          "doc")
     set(INSTALL_DATA         ".")
-    set(INSTALL_TRANSLATIONS "translations")
+    set(INSTALL_TRANSLATIONS "translations/${PROJECT_NAME}")
 endif()
 
 add_subdirectory(translations)
