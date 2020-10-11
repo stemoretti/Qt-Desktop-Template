@@ -12,6 +12,10 @@ target_sources(${PROJECT_NAME}
         mainwindow.ui
 )
 
+if(WIN32)
+    target_sources(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/resources/${PROJECT_NAME}.rc")
+endif()
+
 target_include_directories(${PROJECT_NAME}
     ${DEFAULT_INCLUDE_DIRECTORIES}
 )

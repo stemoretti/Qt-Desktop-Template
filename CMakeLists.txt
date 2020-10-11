@@ -33,6 +33,7 @@ endif()
 add_subdirectory(translations)
 add_subdirectory(include)
 add_subdirectory(resources)
+add_subdirectory(package)
 add_subdirectory(src)
 
 if(BUILD_TESTS)
