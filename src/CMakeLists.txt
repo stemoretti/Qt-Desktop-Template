@@ -1,4 +1,4 @@
-add_executable(${PROJECT_NAME} "")
+add_executable(${PROJECT_NAME} WIN32 "")
 
 target_sources(${PROJECT_NAME}
     PRIVATE
@@ -14,9 +14,6 @@ target_sources(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME}
     ${DEFAULT_INCLUDE_DIRECTORIES}
-
-    PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
 set_target_properties(${PROJECT_NAME}

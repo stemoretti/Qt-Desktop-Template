@@ -13,13 +13,13 @@ jobs:
       dist: xenial
       compiler: gcc
       if: branch = master
-      env: VERSION=$(git rev-parse --short HEAD)
+      env: VERSION=$(git log -1 --format=%cd --date=format:%Y%m%d)_$(git rev-parse --short HEAD)
     - name: Release
       os: linux
       dist: xenial
       compiler: gcc
       if: tag IS present
-      env: VERSION=$TRAVIS_TAG
+      env: VERSION=${TRAVIS_TAG#v}
 
 before_install:
   - sudo add-apt-repository ppa:beineri/opt-qt-5.12.9-xenial -y

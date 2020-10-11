@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Qt Desktop Template
-Comment=A template for creating Qt-based desktop applications
+Comment=A template for creating Qt Widgets desktop applications
 Exec=qt-desktop-template
 Icon=qt-desktop-template
 Categories=Office;

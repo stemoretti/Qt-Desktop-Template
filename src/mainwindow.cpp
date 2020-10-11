@@ -19,21 +19,17 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    setWindowTitle(PROJECT_DISPLAY_NAME);
+
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::showSettings);
     connect(ui->actionAbout, &QAction::triggered, this, [this]() {
         QMessageBox::about(
             this,
-            tr("About %1").arg(PROJECT_NAME),
-            tr("<b>%1 %2</b>"
-               "<p>A template for creating Qt-based desktop applications.</p>"
-               "<p>See <a href='https://github.com/stemoretti/qt-desktop-template'>"
-               "github.com/stemoretti/qt-desktop-template</a> for more "
-               "informations.</p>"
-               "<p>Copyright &copy; 2019 Stefano Moretti <a "
-               "href='mailto:stemoretti@gmx.com'>stemoretti@gmx.com</a></p>")
-                .arg(PROJECT_NAME)
-                .arg(PROJECT_VERSION)
+            tr("About %1").arg(PROJECT_DISPLAY_NAME),
+            "<p><b>" PROJECT_DISPLAY_NAME " " PROJECT_VERSION "</b></p><p>"
+            + tr("A template for creating Qt Widgets desktop applications.")
+            + "</p><p><a href='" PROJECT_URL "'>" PROJECT_URL "</a></p>"
         );
     });
     connect(ui->actionAbout_Qt, &QAction::triggered, this, [this]() {

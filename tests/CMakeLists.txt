@@ -17,9 +17,6 @@ add_test(
 
 target_include_directories(test_main
     ${DEFAULT_INCLUDE_DIRECTORIES}
-
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 set_target_properties(test_main
