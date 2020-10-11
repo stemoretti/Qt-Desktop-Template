@@ -1,8 +1,14 @@
-Qt Desktop Template
-===================
-
 .. image:: https://travis-ci.com/stemoretti/qt-desktop-template.svg?branch=master
   :target: https://travis-ci.com/stemoretti/qt-desktop-template
+
+.. image:: https://github.com/stemoretti/qt-desktop-template/workflows/AppImage/badge.svg
+  :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflows%3AAppImage
+
+.. image:: https://github.com/stemoretti/qt-desktop-template/workflows/Windows/badge.svg
+  :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflow%3AWindows
+
+Qt Desktop Template
+===================
 
 A template for creating Qt Widgets desktop applications.
 
@@ -21,7 +27,7 @@ The following software is required to compile this application:
 Compiling and installing under Linux
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: console
+.. code:: console
 
   git clone https://github.com/stemoretti/qt-desktop-template.git
   cd qt-desktop-template
@@ -46,13 +52,13 @@ Translations can be added to the application by following the steps below.
 
 * Then either generate the specific ts file with
 
-  .. code-block:: console
+  .. code:: console
 
     make ts_qt-desktop-template_[your language code]
 
   or generate every translation file with
 
-  .. code-block:: console
+  .. code:: console
 
     make ts_files_update
 
@@ -64,5 +70,14 @@ The binary translation files will be created automatically during the compilatio
 Credits
 -------
 
-* These build scripts are based on
-  `cmake-init <https://github.com/cginternals/cmake-init>`__
+* `cmake-init <https://github.com/cginternals/cmake-init>`__
+
+* `Another Qt installer <https://github.com/miurahr/aqtinstall>`__
+
+* `install-qt-action <https://github.com/jurplel/install-qt-action>`__
+
+* `install-linuxdeploy-action <https://github.com/miurahr/install-linuxdeploy-action>`__
+
+* `linuxdeployqt <https://github.com/probonopd/linuxdeployqt>`__
+
+* `linuxdeploy <https://github.com/linuxdeploy/linuxdeploy>`__
