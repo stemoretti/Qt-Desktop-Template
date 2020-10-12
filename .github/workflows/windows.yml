@@ -52,7 +52,7 @@ jobs:
         PACKAGE_FILENAME: Qt_Desktop_Template-${{ env.VERSION }}-win${{ matrix.arch }}
       run: |
         windeployqt --compiler-runtime appdir/qt-desktop-template.exe
-        7z a -wappdir -tzip ${GITHUB_WORKSPACE}/$PACKAGE_FILENAME.zip *
+        7z a -tzip ${GITHUB_WORKSPACE}/$PACKAGE_FILENAME.zip ./appdir/*
         iscc \
           //DMyAppVersion="$VERSION" \
           //DMyAppDir="appdir" \
