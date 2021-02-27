@@ -16,14 +16,14 @@ include(GNUInstallDirs)
 
 # Installation paths
 if(UNIX)
-    set(INSTALL_ROOT         "${CMAKE_INSTALL_DATAROOTDIR}")
+    set(INSTALL_DATAROOT     "${CMAKE_INSTALL_DATAROOTDIR}")
     set(INSTALL_BIN          "${CMAKE_INSTALL_BINDIR}")
     set(INSTALL_DOC          "${CMAKE_INSTALL_DOCDIR}")
     set(INSTALL_DATA         "${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}")
     set(INSTALL_TRANSLATIONS "${INSTALL_DATA}/translations")
 else()
     # Install into local directory
-    set(INSTALL_ROOT         ".")
+    set(INSTALL_DATAROOT     ".")
     set(INSTALL_BIN          ".")
     set(INSTALL_DOC          "doc")
     set(INSTALL_DATA         ".")

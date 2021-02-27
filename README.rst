@@ -1,8 +1,8 @@
-.. image:: https://travis-ci.com/stemoretti/qt-desktop-template.svg?branch=master
+.. .. image:: https://travis-ci.com/stemoretti/qt-desktop-template.svg?branch=master
   :target: https://travis-ci.com/stemoretti/qt-desktop-template
 
 .. image:: https://github.com/stemoretti/qt-desktop-template/workflows/AppImage/badge.svg
-  :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflows%3AAppImage
+  :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflow%3AAppImage
 
 .. image:: https://github.com/stemoretti/qt-desktop-template/workflows/Windows/badge.svg
   :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflow%3AWindows
@@ -72,7 +72,7 @@ Credits
 
 * `cmake-init <https://github.com/cginternals/cmake-init>`__
 
-* `Another Qt installer <https://github.com/miurahr/aqtinstall>`__
+* `aqtinstall <https://github.com/miurahr/aqtinstall>`__
 
 * `install-qt-action <https://github.com/jurplel/install-qt-action>`__
 

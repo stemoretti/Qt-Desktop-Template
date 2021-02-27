@@ -6,6 +6,9 @@ on:
       - master
     tags:
       - 'v*.*.*'
+  pull_request:
+    branches:
+      - master
 
 jobs:
   windows:
@@ -13,6 +16,8 @@ jobs:
     strategy:
       matrix:
         arch: [32, 64]
+    env:
+      QTVER: 5.15.2
     steps:
     - uses: actions/checkout@v2
     - name: Detect release tag
@@ -25,15 +30,22 @@ jobs:
           VERSION=$(git log -1 --format=%cd --date=format:%Y%m%d)_$(git rev-parse --short HEAD)
         fi
         echo "VERSION=$VERSION" >> $GITHUB_ENV
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v2
+      with:
+        path: ${{ runner.workspace }}/Qt
+        key: ${{ runner.os }}-${{ matrix.arch }}-cache-qt-${{ env.QTVER }}
     - name: Install Qt
       shell: bash
       env:
         QTDIR: ${{ runner.workspace }}/Qt
-        QTVER: 5.15.1
       run: |
-        pip install aqtinstall
-        aqt install --outputdir $QTDIR $QTVER windows desktop win${{ matrix.arch }}_mingw81
-        aqt tool -O $QTDIR windows tools_mingw 8.1.0-1-202004170606 qt.tools.win${{ matrix.arch }}_mingw810
+        if [ "${{ steps.cache-qt.outputs.cache-hit }}" != "true" ]; then
+          pip install aqtinstall
+          aqt install -E 7z -O $QTDIR $QTVER windows desktop win${{ matrix.arch }}_mingw81
+          aqt tool -E 7z -O $QTDIR windows tools_mingw 8.1.0-1-202004170606 qt.tools.win${{ matrix.arch }}_mingw810
+        fi
         echo "$QTDIR/$QTVER/mingw81_${{ matrix.arch }}/bin" >> $GITHUB_PATH
         echo "$QTDIR/Tools/mingw810_${{ matrix.arch }}/bin" >> $GITHUB_PATH
         echo "Qt5_DIR=$QTDIR/$QTVER/mingw81_${{ matrix.arch }}" >> $GITHUB_ENV
@@ -42,23 +54,23 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="" ..
-        make -j2
-        make install DESTDIR=appdir
+        cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DCMAKE_INSTALL_PREFIX="" ..
+        mingw32-make -j2
+        mingw32-make install DESTDIR=appdir
+    - name: Run tests
+      shell: bash
+      working-directory: 'build'
+      continue-on-error: true
+      run: make test ARGS="-VV"
     - name: Create package and installer
       shell: bash
       working-directory: 'build'
       env:
         PACKAGE_FILENAME: Qt_Desktop_Template-${{ env.VERSION }}-win${{ matrix.arch }}
       run: |
-        windeployqt --compiler-runtime appdir/qt-desktop-template.exe
-        7z a -tzip ${GITHUB_WORKSPACE}/$PACKAGE_FILENAME.zip ./appdir/*
-        iscc \
-          //DMyAppVersion="$VERSION" \
-          //DMyAppDir="appdir" \
-          //O"$GITHUB_WORKSPACE" \
-          //F"$PACKAGE_FILENAME" \
-          qt-desktop-template.iss
+        windeployqt appdir/qt-desktop-template.exe
+        7z a -tzip "$GITHUB_WORKSPACE/$PACKAGE_FILENAME.zip" ./appdir/*
+        iscc //DMyAppDir=appdir //O"$GITHUB_WORKSPACE" //F"$PACKAGE_FILENAME" qt-desktop-template.iss
         echo "PACKAGE_FILENAME=$PACKAGE_FILENAME" >> $GITHUB_ENV
     - name: Upload artifacts
       uses: actions/upload-artifact@v2

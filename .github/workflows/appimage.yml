@@ -6,10 +6,15 @@ on:
       - master
     tags:
       - 'v*.*.*'
+  pull_request:
+    branches:
+      - master
 
 jobs:
   appimage:
     runs-on: ubuntu-16.04
+    env:
+      QTVER: 5.12.10
     steps:
     - uses: actions/checkout@v2
     - name: Detect release tag
@@ -21,23 +26,34 @@ jobs:
           VERSION=$(git log -1 --format=%cd --date=format:%Y%m%d)_$(git rev-parse --short HEAD)
         fi
         echo "VERSION=$VERSION" >> $GITHUB_ENV
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v2
+      with:
+        path: ${{ runner.workspace }}/Qt
+        key: ${{ runner.os }}-cache-qt-${{ env.QTVER }}
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
-        version: 5.12.9
+        version: ${{ env.QTVER }}
         host: linux
         target: desktop
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
     - name: Install linuxdeploy
-      uses: miurahr/install-linuxdeploy-action@v1.2.0
+      uses: miurahr/install-linuxdeploy-action@v1
       with:
         plugins: qt appimage
     - name: Build
       run: |
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
+        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DCMAKE_INSTALL_PREFIX=/usr ..
         make -j2
         make install DESTDIR=appdir
+    - name: Run tests
+      working-directory: 'build'
+      continue-on-error: true
+      run: make test ARGS="-VV"
     - name: Create AppImage
       working-directory: 'build'
       env:
