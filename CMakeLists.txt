@@ -1,21 +1,28 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(qt-desktop-template VERSION 0.1.0 LANGUAGES CXX)
 
 set(PROJECT_DISPLAY_NAME "Qt Desktop Template")
 set(PROJECT_URL "https://github.com/stemoretti/qt-desktop-template")
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
 
 option(BUILD_TESTS "Build tests" OFF)
 
-include(BuildType)
-include(CompilerConfig)
-include(QtConfig)
 include(GNUInstallDirs)
 
+include(cmake/BuildType.cmake)
+include(cmake/CompilerConfig.cmake)
+include(cmake/QtConfig.cmake)
+
 # Installation paths
-if(UNIX)
+if(APPLE)
+    set(INSTALL_DATAROOT     "Resources")
+    set(INSTALL_BIN          "MacOS")
+    set(INSTALL_DOC          "${INSTALL_DATAROOT}/doc")
+    set(INSTALL_DATA         "${INSTALL_DATAROOT}")
+    set(INSTALL_TRANSLATIONS "${INSTALL_DATAROOT}/translations")
+elseif(UNIX)
     set(INSTALL_DATAROOT     "${CMAKE_INSTALL_DATAROOTDIR}")
     set(INSTALL_BIN          "${CMAKE_INSTALL_BINDIR}")
     set(INSTALL_DOC          "${CMAKE_INSTALL_DOCDIR}")
@@ -30,8 +37,6 @@ else()
     set(INSTALL_TRANSLATIONS "translations")
 endif()
 
-add_subdirectory(translations)
-add_subdirectory(include)
 add_subdirectory(resources)
 add_subdirectory(package)
 add_subdirectory(src)

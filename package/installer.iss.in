@@ -18,6 +18,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
+UninstallDisplayIcon={app}\{#MyAppExeName}
 AllowNoIcons=yes
 LicenseFile=@PROJECT_SOURCE_DIR@\LICENSE
 ; Remove the following line to run in administrative install mode (install for all users.)

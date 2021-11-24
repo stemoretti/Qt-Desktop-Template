@@ -1,4 +1,4 @@
-name: AppImage
+name: MacOS
 
 on:
   push:
@@ -12,9 +12,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: macos-latest
     env:
-      QTVER: 5.12.11
+      QTVER: 6.2.1
+      EXECUTABLE: "qt-desktop-template"
+      APPLICATION: "Qt Desktop Template"
 
     steps:
     - uses: actions/checkout@v2
@@ -46,25 +48,25 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
+        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX= ..
         make -j2
-        make install DESTDIR=appdir
+        make install DESTDIR="${{ env.APPLICATION }}.app/Contents"
 
-    - name: Create AppImage
+    - name: Deploy
       working-directory: 'build'
-      env:
-        DESKTOP: appdir/usr/share/applications/qt-desktop-template.desktop
       run: |
-        wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" -O linuxdeployqt
-        chmod a+x linuxdeployqt
-        unset QTDIR ; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
-        ./linuxdeployqt --appimage-extract-and-run ${{ env.DESKTOP }} -appimage
+        macdeployqt "${{ env.APPLICATION }}.app" -verbose=3
+
+    - name: Create Zip file
+      working-directory: 'build'
+      run: |
+        ditto -c -k --sequesterRsrc --keepParent "${{ env.APPLICATION }}.app" ${{ env.EXECUTABLE }}-${{ env.VERSION }}-macOS.zip
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: AppImage
-        path: build/*.AppImage
+        name: ${{ env.EXECUTABLE }}-${{ env.VERSION }}-macOS.zip
+        path: build/${{ env.EXECUTABLE }}-${{ env.VERSION }}-macOS.zip
 
     - name: Release
       uses: softprops/action-gh-release@v1
@@ -72,6 +74,6 @@ jobs:
       with:
         prerelease: ${{ contains(github.ref, '-prerelease') }}
         files: |
-          build/Qt_Desktop_Template-${{ env.VERSION }}-x86_64.AppImage
+          build/${{ env.EXECUTABLE }}-${{ env.VERSION }}-macOS.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,45 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        qtver: [5.12.11, 5.15.2, 6.2.1]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v2
+      with:
+        path: ${{ runner.workspace }}/Qt
+        key: ${{ runner.os }}-cache-qt-${{ matrix.qtver }}-v1
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: ${{ matrix.qtver }}
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON ..
+        make -j2
+
+    - name: Run tests
+      working-directory: 'build'
+      run: make test ARGS="-VV"

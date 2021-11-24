@@ -11,10 +11,13 @@
 
 int main(int argc, char *argv[])
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
+
     QApplication::setApplicationName(PROJECT_DISPLAY_NAME);
     QApplication::setApplicationVersion(PROJECT_VERSION);
     QApplication::setOrganizationName(PROJECT_NAME);
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QApplication app(argc, argv);
 
@@ -32,8 +35,7 @@ int main(int argc, char *argv[])
     QTranslator qtTranslator;
     QTranslator translator;
     if (lang != "en_US") {
-        if (qtTranslator.load(QLocale(lang), "qtbase", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath))
-            || qtTranslator.load(QLocale(lang), "qt", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+        if (qtTranslator.load(QLocale(lang), "qt", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
             app.installTranslator(&qtTranslator);
 
         if (translator.load(QLocale(lang), PROJECT_NAME, "_", Utils::resourcePath(TRANSLATIONS_PATH)))

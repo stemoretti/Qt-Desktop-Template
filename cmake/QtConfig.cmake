@@ -6,17 +6,10 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-if(NOT QT_MINIMUM_REQUIRED)
-    set(QT_MINIMUM_REQUIRED "5.9.0")
-endif()
-
-find_package(Qt5 ${QT_MINIMUM_REQUIRED}
-    REQUIRED
-    COMPONENTS
-        Widgets
-)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 
 set(DEFAULT_LINK_LIBRARIES
     PRIVATE
-        Qt5::Widgets
+        Qt${QT_VERSION_MAJOR}::Widgets
 )

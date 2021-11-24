@@ -1,22 +1,14 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-/* include/config.h. Generated automatically at end of configure. */
-
 #define PROJECT_NAME "@PROJECT_NAME@"
-
 #define PROJECT_DISPLAY_NAME "@PROJECT_DISPLAY_NAME@"
-
 #define PROJECT_VERSION "@PROJECT_VERSION@"
-
 #define PROJECT_URL "@PROJECT_URL@"
 
 #define DATAROOT_PATH "@INSTALL_DATAROOT@"
-
 #define DOC_PATH "@INSTALL_DOC@"
-
 #define DATA_PATH "@INSTALL_DATA@"
-
 #define TRANSLATIONS_PATH "@INSTALL_TRANSLATIONS@"
 
 #endif // CONFIG_H

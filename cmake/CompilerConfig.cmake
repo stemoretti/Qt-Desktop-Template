@@ -5,8 +5,17 @@ set(DEFAULT_PROPERTIES
 )
 
 set(DEFAULT_INCLUDE_DIRECTORIES
-    PUBLIC
+    PRIVATE
         $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+)
+
+set(DEFAULT_COMPILE_DEFINITIONS
+    PRIVATE
+        # enable deprecated warnings for qt < 5.13
+        $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_DEPRECATED_WARNINGS>
+
+        # disable deprecated warnings for qt >= 5.13
+        $<$<CONFIG:Release>:QT_NO_DEPRECATED_WARNINGS>
 )
 
 set(DEFAULT_COMPILE_OPTIONS
@@ -15,7 +24,6 @@ set(DEFAULT_COMPILE_OPTIONS
             -Wall
             -Wextra
             -Wpedantic
-            -DQT_DEPRECATED_WARNINGS
         >
 
         $<$<CXX_COMPILER_ID:MSVC>:

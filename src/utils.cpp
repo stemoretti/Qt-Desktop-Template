@@ -15,7 +15,7 @@ QString resourcePath(const QString &path)
 
     if (directory.cd(path) // when run on Windows
         || directory.cd(QDir(path).dirName()) // when run inside the build directory
-        || (directory.cdUp() && directory.cd(path))) // when run on Linux
+        || (directory.cdUp() && directory.cd(path))) // when run on Linux or MacOS
         return directory.absolutePath();
 
     return QString();
