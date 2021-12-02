@@ -13,6 +13,9 @@ set(SOURCES
 
 if(WIN32)
     set(RESOURCES "${PROJECT_SOURCE_DIR}/resources/icon.rc")
+elseif(APPLE)
+    set(RESOURCES "${PROJECT_SOURCE_DIR}/resources/Icon.icns")
+    set_source_files_properties("${RESOURCES}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -33,9 +36,24 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     ${DEFAULT_PROPERTIES}
 
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
-
-    WIN32_EXECUTABLE TRUE
 )
+
+if(WIN32)
+    set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
+elseif(APPLE AND BUILD_MACOSX_BUNDLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        OUTPUT_NAME "${PROJECT_DISPLAY_NAME}"
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/package/Info.plist.in"
+    )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_BINARY_DIR}/translations
+                ${CMAKE_BINARY_DIR}/${PROJECT_DISPLAY_NAME}.app/Contents/Resources/translations
+        COMMENT "Copying translation files into the bundle 'Resources' folder"
+        VERBATIM
+    )
+endif()
 
 target_compile_options(${PROJECT_NAME}
     ${DEFAULT_COMPILE_OPTIONS}
@@ -47,6 +65,7 @@ target_link_libraries(${PROJECT_NAME}
 
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION "${INSTALL_BIN}" COMPONENT runtime
+    BUNDLE DESTINATION . COMPONENT runtime
 )
 
 set(LANGUAGES
@@ -58,9 +77,8 @@ foreach(_lang ${LANGUAGES})
     list(APPEND TS_FILES "../translations/${PROJECT_NAME}_${_lang}.ts")
 endforeach()
 
-set_source_files_properties(${TS_FILES}
-    PROPERTIES
-        OUTPUT_LOCATION "${PROJECT_BINARY_DIR}/translations"
+set_source_files_properties(${TS_FILES} PROPERTIES
+    OUTPUT_LOCATION "${CMAKE_BINARY_DIR}/translations"
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

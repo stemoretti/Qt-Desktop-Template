@@ -8,6 +8,7 @@ set(PROJECT_URL "https://github.com/stemoretti/qt-desktop-template")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
 
 option(BUILD_TESTS "Build tests" OFF)
+option(BUILD_MACOSX_BUNDLE "Build MacOSX Bundle" ON)
 
 include(GNUInstallDirs)
 
@@ -16,7 +17,7 @@ include(cmake/CompilerConfig.cmake)
 include(cmake/QtConfig.cmake)
 
 # Installation paths
-if(APPLE)
+if(APPLE AND BUILD_MACOSX_BUNDLE)
     set(INSTALL_DATAROOT     "Resources")
     set(INSTALL_BIN          "MacOS")
     set(INSTALL_DOC          "${INSTALL_DATAROOT}/doc")

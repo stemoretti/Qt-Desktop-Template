@@ -18,7 +18,7 @@
     <key>CFBundleName</key>
     <string>@PROJECT_DISPLAY_NAME@</string>
     <key>CFBundleExecutable</key>
-    <string>@PROJECT_NAME@</string>
+    <string>@PROJECT_DISPLAY_NAME@</string>
 
     <key>CFBundleVersion</key>
     <string>@PROJECT_VERSION@</string>

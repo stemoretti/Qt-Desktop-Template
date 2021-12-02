@@ -15,7 +15,6 @@ jobs:
     runs-on: macos-latest
     env:
       QTVER: 6.2.1
-      EXECUTABLE: "qt-desktop-template"
       APPLICATION: "Qt Desktop Template"
 
     steps:
@@ -48,9 +47,8 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX= ..
+        cmake -DCMAKE_BUILD_TYPE=Release ..
         make -j2
-        make install DESTDIR="${{ env.APPLICATION }}.app/Contents"
 
     - name: Deploy
       working-directory: 'build'
@@ -59,14 +57,17 @@ jobs:
 
     - name: Create Zip file
       working-directory: 'build'
+      env:
+        PACKAGE_FILENAME: Qt_Desktop_Template-${{ env.VERSION }}-macOS.zip
       run: |
-        ditto -c -k --sequesterRsrc --keepParent "${{ env.APPLICATION }}.app" ${{ env.EXECUTABLE }}-${{ env.VERSION }}-macOS.zip
+        ditto -c -k --sequesterRsrc --keepParent "${{ env.APPLICATION }}.app" $PACKAGE_FILENAME
+        echo "PACKAGE_FILENAME=$PACKAGE_FILENAME" >> $GITHUB_ENV
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ env.EXECUTABLE }}-${{ env.VERSION }}-macOS.zip
-        path: build/${{ env.EXECUTABLE }}-${{ env.VERSION }}-macOS.zip
+        name: MacOS-Bundle
+        path: build/${{ env.PACKAGE_FILENAME }}
 
     - name: Release
       uses: softprops/action-gh-release@v1
@@ -74,6 +75,6 @@ jobs:
       with:
         prerelease: ${{ contains(github.ref, '-prerelease') }}
         files: |
-          build/${{ env.EXECUTABLE }}-${{ env.VERSION }}-macOS.zip
+          build/${{ env.PACKAGE_FILENAME }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

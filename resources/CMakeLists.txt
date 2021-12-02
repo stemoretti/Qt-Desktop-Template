@@ -1,7 +1,7 @@
 if(APPLE)
     install(FILES
         "Icon.icns"
-        DESTINATION "${INSTALL_DATAROOT}"
+        DESTINATION "${INSTALL_DATA}"
         COMPONENT runtime
     )
 elseif(UNIX)
