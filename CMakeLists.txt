@@ -5,19 +5,18 @@ project(qt-desktop-template VERSION 0.1.0 LANGUAGES CXX)
 set(PROJECT_DISPLAY_NAME "Qt Desktop Template")
 set(PROJECT_URL "https://github.com/stemoretti/qt-desktop-template")
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 option(BUILD_TESTS "Build tests" OFF)
-option(BUILD_MACOSX_BUNDLE "Build MacOSX Bundle" ON)
 
 include(GNUInstallDirs)
 
-include(cmake/BuildType.cmake)
-include(cmake/CompilerConfig.cmake)
-include(cmake/QtConfig.cmake)
+include(BuildType)
+include(CompilerConfig)
+include(QtConfig)
 
 # Installation paths
-if(APPLE AND BUILD_MACOSX_BUNDLE)
+if(APPLE)
     set(INSTALL_DATAROOT     "Resources")
     set(INSTALL_BIN          "MacOS")
     set(INSTALL_DOC          "${INSTALL_DATAROOT}/doc")
@@ -39,7 +38,6 @@ else()
 endif()
 
 add_subdirectory(resources)
-add_subdirectory(package)
 add_subdirectory(src)
 
 if(BUILD_TESTS)

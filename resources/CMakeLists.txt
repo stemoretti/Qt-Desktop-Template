@@ -1,10 +1,4 @@
-if(APPLE)
-    install(FILES
-        "Icon.icns"
-        DESTINATION "${INSTALL_DATA}"
-        COMPONENT runtime
-    )
-elseif(UNIX)
+if(UNIX)
     install(FILES
         "${PROJECT_NAME}.desktop"
         DESTINATION "${INSTALL_DATAROOT}/applications"

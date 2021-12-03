@@ -4,11 +4,6 @@ set(DEFAULT_PROPERTIES
     CXX_EXTENSIONS            NO
 )
 
-set(DEFAULT_INCLUDE_DIRECTORIES
-    PRIVATE
-        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
-)
-
 set(DEFAULT_COMPILE_DEFINITIONS
     PRIVATE
         # enable deprecated warnings for qt < 5.13

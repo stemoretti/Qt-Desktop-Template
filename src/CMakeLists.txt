@@ -1,59 +1,58 @@
-configure_file(config.h.in "${CMAKE_BINARY_DIR}/include/config.h")
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 
-set(SOURCES
+add_executable(${PROJECT_NAME}
     main.cpp
     mainwindow.h
     mainwindow.cpp
     utils.h
     utils.cpp
 
-    # ui files
     mainwindow.ui
 )
 
 if(WIN32)
     set(RESOURCES "${PROJECT_SOURCE_DIR}/resources/icon.rc")
-elseif(APPLE)
+
+    set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
+
+    configure_file("${PROJECT_SOURCE_DIR}/cmake/installer.iss.in" "${PROJECT_BINARY_DIR}/installer.iss")
+endif()
+
+if(APPLE)
     set(RESOURCES "${PROJECT_SOURCE_DIR}/resources/Icon.icns")
     set_source_files_properties("${RESOURCES}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        OUTPUT_NAME "${PROJECT_DISPLAY_NAME}"
+        MACOSX_BUNDLE TRUE
+    )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E copy_directory
+                "${PROJECT_BINARY_DIR}/translations"
+                "${PROJECT_BINARY_DIR}/${PROJECT_DISPLAY_NAME}.app/Contents/Resources/translations"
+        COMMENT "Copying translation files into the bundle 'Resources' folder"
+        VERBATIM
+    )
 endif()
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION ${SOURCES} ${RESOURCES})
-else()
-    add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
-endif()
+target_sources(${PROJECT_NAME} PRIVATE ${RESOURCES})
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    ${DEFAULT_PROPERTIES}
+
+    RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}"
+)
+
+configure_file("${PROJECT_SOURCE_DIR}/cmake/config.h.in" "${PROJECT_BINARY_DIR}/include/config.h")
 
 target_include_directories(${PROJECT_NAME}
-    ${DEFAULT_INCLUDE_DIRECTORIES}
+    PRIVATE
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
 )
 
 target_compile_definitions(${PROJECT_NAME}
     ${DEFAULT_COMPILE_DEFINITIONS}
 )
-
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    ${DEFAULT_PROPERTIES}
-
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
-)
-
-if(WIN32)
-    set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
-elseif(APPLE AND BUILD_MACOSX_BUNDLE)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        OUTPUT_NAME "${PROJECT_DISPLAY_NAME}"
-        MACOSX_BUNDLE TRUE
-        MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/package/Info.plist.in"
-    )
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_BINARY_DIR}/translations
-                ${CMAKE_BINARY_DIR}/${PROJECT_DISPLAY_NAME}.app/Contents/Resources/translations
-        COMMENT "Copying translation files into the bundle 'Resources' folder"
-        VERBATIM
-    )
-endif()
 
 target_compile_options(${PROJECT_NAME}
     ${DEFAULT_COMPILE_OPTIONS}
@@ -61,11 +60,14 @@ target_compile_options(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     ${DEFAULT_LINK_LIBRARIES}
+
+    PRIVATE
+        Qt${QT_VERSION_MAJOR}::Widgets
 )
 
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION "${INSTALL_BIN}" COMPONENT runtime
-    BUNDLE DESTINATION . COMPONENT runtime
+    BUNDLE DESTINATION "." COMPONENT runtime
 )
 
 set(LANGUAGES
@@ -78,7 +80,7 @@ foreach(_lang ${LANGUAGES})
 endforeach()
 
 set_source_files_properties(${TS_FILES} PROPERTIES
-    OUTPUT_LOCATION "${CMAKE_BINARY_DIR}/translations"
+    OUTPUT_LOCATION "${PROJECT_BINARY_DIR}/translations"
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -95,8 +97,8 @@ else()
     foreach(_ts_file ${TS_FILES})
         get_filename_component(_ts_name ${_ts_file} NAME_WE)
         add_custom_target("ts_${_ts_name}"
-            ${Qt5_LUPDATE_EXECUTABLE} -no-obsolete "${PROJECT_SOURCE_DIR}/src" -ts ${_ts_file}
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            "${Qt5_LUPDATE_EXECUTABLE}" -no-obsolete "${PROJECT_SOURCE_DIR}/src" -ts ${_ts_file}
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
             VERBATIM
         )
         add_dependencies(ts_files_update "ts_${_ts_name}")
@@ -109,7 +111,3 @@ else()
 endif()
 
 install(FILES ${QM_FILES} DESTINATION "${INSTALL_TRANSLATIONS}" COMPONENT runtime)
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(${PROJECT_NAME})
-endif()

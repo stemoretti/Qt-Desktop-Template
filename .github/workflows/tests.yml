@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        qtver: [5.12.11, 5.15.2, 6.2.1]
+        qtver: [5.12.12, 5.15.2, 6.2.2]
 
     steps:
     - uses: actions/checkout@v2

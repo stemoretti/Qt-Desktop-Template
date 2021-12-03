@@ -1,4 +1,3 @@
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Test REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Test REQUIRED)
 
 add_executable(test_main
@@ -10,10 +9,6 @@ add_executable(test_main
 add_test(
     NAME test_main
     COMMAND test_main
-)
-
-target_include_directories(test_main
-    ${DEFAULT_INCLUDE_DIRECTORIES}
 )
 
 set_target_properties(test_main PROPERTIES
