@@ -38,19 +38,30 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "{#MyAppDir}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyAppDir}\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 
-Source: "{#MyAppDir}\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#MyAppDir}\iconengines\*"; DestDir: "{app}\iconengines"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#MyAppDir}\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion
+Source: "{#MyAppDir}\iconengines\*"; DestDir: "{app}\iconengines"; Flags: ignoreversion
 Source: "{#MyAppDir}\icons\*"; DestDir: "{app}\icons"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#MyAppDir}\imageformats\*"; DestDir: "{app}\imageformats"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#MyAppDir}\platforms\*"; DestDir: "{app}\platforms"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#MyAppDir}\styles\*"; DestDir: "{app}\styles"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#MyAppDir}\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion recursesubdirs createallsubdirs
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "{#MyAppDir}\imageformats\*"; DestDir: "{app}\imageformats"; Flags: ignoreversion
+Source: "{#MyAppDir}\platforms\*"; DestDir: "{app}\platforms"; Flags: ignoreversion
+Source: "{#MyAppDir}\styles\*"; DestDir: "{app}\styles"; Flags: ignoreversion
+Source: "{#MyAppDir}\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion
+Source: "{#MyAppDir}\vc_redist.x64.exe"; DestDir: {app}; Flags: deleteafterinstall
 
 [Icons]
 Name: "{autostartmenu}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
+[Code]
+function IsVC2015To2022Installed: Boolean;
+begin
+  Result := not IsMsiProductInstalled('{36F68A90-239C-34DF-B58C-64B30153CE35}', PackVersionComponents(14, 0, 0, 0))
+end;
+
 [Run]
+Filename: "{app}\vc_redist.x64.exe"; \
+Parameters: "/install /passive /norestart"; \
+Check: IsVC2015To2022Installed; \
+StatusMsg: "Installing VC++ redistributables..."
+
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 

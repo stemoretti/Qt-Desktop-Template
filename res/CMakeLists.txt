@@ -1,6 +1,6 @@
 if(UNIX)
     install(FILES
-        "${PROJECT_NAME}.desktop"
+        "qt-desktop-template.desktop"
         DESTINATION "${INSTALL_DATAROOT}/applications"
         COMPONENT runtime
     )

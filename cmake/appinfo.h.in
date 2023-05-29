@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef APPINFO_H
+#define APPINFO_H
 
 #define PROJECT_NAME "@PROJECT_NAME@"
 #define PROJECT_DISPLAY_NAME "@PROJECT_DISPLAY_NAME@"
@@ -11,4 +11,4 @@
 #define DATA_PATH "@INSTALL_DATA@"
 #define TRANSLATIONS_PATH "@INSTALL_TRANSLATIONS@"
 
-#endif // CONFIG_H
+#endif // APPINFO_H

@@ -12,15 +12,12 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        arch: [32, 64]
+    runs-on: windows-2019
     env:
-      QTVER: 5.15.2
+      QTVER: 6.5.1
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Detect release tag
       shell: bash
@@ -33,12 +30,19 @@ jobs:
         fi
         echo "VERSION=$VERSION" >> $GITHUB_ENV
 
+    - name: Configure MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: win64
+        spectre: true
+        vsversion: 2019
+
     - name: Cache Qt
       id: cache-qt
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ runner.workspace }}/Qt
-        key: ${{ runner.os }}-${{ matrix.arch }}-cache-qt-${{ env.QTVER }}
+        key: ${{ runner.os }}-cache-qt-${{ env.QTVER }}
 
     - name: Install Qt
       shell: bash
@@ -47,27 +51,24 @@ jobs:
       run: |
         if [ "${{ steps.cache-qt.outputs.cache-hit }}" != "true" ]; then
           pip install aqtinstall
-          aqt install-qt -E 7z -O $QTDIR windows desktop $QTVER win${{ matrix.arch }}_mingw81
-          aqt install-tool -E 7z -O $QTDIR windows desktop tools_mingw qt.tools.win${{ matrix.arch }}_mingw810
+          aqt install-qt -O $QTDIR windows desktop $QTVER win64_msvc2019_64
         fi
-        echo "$QTDIR/$QTVER/mingw81_${{ matrix.arch }}/bin" >> $GITHUB_PATH
-        echo "$QTDIR/Tools/mingw810_${{ matrix.arch }}/bin" >> $GITHUB_PATH
-        echo "Qt5_DIR=$QTDIR/$QTVER/mingw81_${{ matrix.arch }}" >> $GITHUB_ENV
+        echo "$QTDIR/$QTVER/msvc2019_64/bin" >> $GITHUB_PATH
 
     - name: Build
       shell: bash
       run: |
         mkdir build
         cd build
-        cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX= ..
-        mingw32-make -j2
-        mingw32-make install DESTDIR=appdir
+        cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX= ..
+        nmake
+        nmake install DESTDIR=appdir
 
     - name: Create package and installer
       shell: bash
       working-directory: 'build'
       env:
-        PACKAGE_FILENAME: Qt_Desktop_Template-${{ env.VERSION }}-win${{ matrix.arch }}
+        PACKAGE_FILENAME: Qt_Desktop_Template-${{ env.VERSION }}-win64
       run: |
         windeployqt appdir/qt-desktop-template.exe
         7z a -tzip "$GITHUB_WORKSPACE/$PACKAGE_FILENAME.zip" ./appdir/*
@@ -75,20 +76,9 @@ jobs:
         echo "PACKAGE_FILENAME=$PACKAGE_FILENAME" >> $GITHUB_ENV
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
-        name: Windows-${{ matrix.arch }}
+        name: Windows
         path: |
           ${{ env.PACKAGE_FILENAME }}.zip
           ${{ env.PACKAGE_FILENAME }}.exe
-
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        prerelease: ${{ contains(github.ref, '-prerelease') }}
-        files: |
-          ${{ env.PACKAGE_FILENAME }}.zip
-          ${{ env.PACKAGE_FILENAME }}.exe
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

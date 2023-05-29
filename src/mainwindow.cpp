@@ -10,7 +10,7 @@
 #include <QSettings>
 #include <QVBoxLayout>
 
-#include "config.h"
+#include "appinfo.h"
 #include "utils.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -20,18 +20,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     setWindowTitle(PROJECT_DISPLAY_NAME);
+    setWindowIcon(
+        QIcon(Utils::resourcePath(DATAROOT_PATH)
+              + QString("/icons/hicolor/scalable/apps/%1.svg").arg(PROJECT_NAME)));
 
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::showSettings);
-    connect(ui->actionAbout, &QAction::triggered, this, [this]() {
-        QMessageBox::about(
-            this,
-            tr("About %1").arg(PROJECT_DISPLAY_NAME),
-            "<p><b>" PROJECT_DISPLAY_NAME " " PROJECT_VERSION "</b></p><p>"
-            + tr("A template for creating Qt Widgets desktop applications.")
-            + "</p><p><a href='" PROJECT_URL "'>" PROJECT_URL "</a></p>"
-        );
-    });
+    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(ui->actionAbout_Qt, &QAction::triggered, this, [this]() {
         QMessageBox::aboutQt(this);
     });
@@ -92,4 +87,17 @@ void MainWindow::showSettings()
 
     if (dialogResult == QDialog::Accepted)
         settings.setValue("language", data);
+}
+
+void MainWindow::showAbout()
+{
+    QMessageBox::about(
+        this,
+        tr("About %1").arg(PROJECT_DISPLAY_NAME),
+        QString("<p><b>%1 %2</b></p><p>%3</p><p><a href='%4'>%4</a></p>")
+            .arg(PROJECT_DISPLAY_NAME)
+            .arg(PROJECT_VERSION)
+            .arg(tr("A template for creating Qt Widgets desktop applications."))
+            .arg(PROJECT_URL)
+    );
 }

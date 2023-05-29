@@ -1,22 +1,22 @@
 .. .. image:: https://travis-ci.com/stemoretti/qt-desktop-template.svg?branch=master
   :target: https://travis-ci.com/stemoretti/qt-desktop-template
 
-.. image:: https://github.com/stemoretti/qt-desktop-template/workflows/AppImage/badge.svg
+.. image:: https://github.com/stemoretti/qt-desktop-template/actions/workflows/appimage.yml/badge.svg
   :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflow%3AAppImage
 
-.. image:: https://github.com/stemoretti/qt-desktop-template/workflows/Windows/badge.svg
+.. image:: https://github.com/stemoretti/qt-desktop-template/actions/workflows/flatpak.yml/badge.svg
+  :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflow%3AFlatpak
+
+.. image:: https://github.com/stemoretti/qt-desktop-template/actions/workflows/windows.yml/badge.svg
   :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflow%3AWindows
 
-.. image:: https://github.com/stemoretti/qt-desktop-template/workflows/MacOS/badge.svg
+.. image:: https://github.com/stemoretti/qt-desktop-template/actions/workflows/macos.yml/badge.svg
   :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflow%3AMacOS
-
-.. image:: https://github.com/stemoretti/qt-desktop-template/workflows/Tests/badge.svg
-  :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflow%3ATests
 
 Qt Desktop Template
 ===================
 
-Template for creating applications for Linux, Windows and MacOS with
+Template for creating applications for Linux, Windows and macOS with
 the Qt Widgets framework.
 
 How to build
@@ -27,12 +27,12 @@ Requirements
 
 The following software is required to compile this application:
 
-* A compiler that supports C++11
-* CMake >= 3.10
-* Qt >= 5.12
+* A compiler that supports C++17
+* CMake >= 3.19
+* Qt >= 6.2
 
-Compiling and installing under Linux or MacOS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Compiling and installing under Linux
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: console
 
@@ -53,40 +53,47 @@ Compiling and running under Windows
 
 Clone the repository with git software like `Github Desktop <https://desktop.github.com/>`__.
 
-It's easier to compile the program using an IDE such as the Qt Creator.
+It's easier to compile the program using an IDE such as Qt Creator.
 Instructions on how to download and install it can be found
-`here <https://doc.qt.io/qt-5/gettingstarted.html>`__.
+`here <https://doc.qt.io/qt-6/qt-intro.html>`__.
 Information on how to use it to build and run programs can be found
 `here <https://doc.qt.io/qtcreator/index.html>`__.
+
+Compiling and creating a bundle under macOS
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: console
+
+  git clone https://github.com/stemoretti/qt-desktop-template.git
+  cd qt-desktop-template
+  cmake -B build -G "Ninja"
+  cmake --build build
+
+The bundle directory is automatically created inside the build directory.
+However, it doesn't contain the libraries that the program needs to run.
+To deploy the required Qt libraries into the bundle, run the following command.
+
+.. code:: console
+
+  macdeployqt "Qt Desktop Template.app" [-dmg]
+
+The optional `-dmg` option is for creating a dmg disk image file.
 
 Translations
 ------------
 
-Translations are stored in ``.ts`` files inside the ``translation`` folder.
+Translations are stored in ``.ts`` files inside the ``translations`` folder.
 Their name contains the language code of the translation they provide.
 
 To add languages, follow the steps below.
 
-* Append the language codes you wish to support to the variable ``LANGUAGES``
-  inside the file ``src/CMakeLists.txt``.
+* Add the translation's file path of the language you wish to support to the
+  variable ``TS_FILES`` inside the file
+  `CMakeLists.txt <https://github.com/stemoretti/qt-desktop-template/blob/master/CMakeLists.txt#L120>`__.
 
 * Configure the project by running CMake.
 
-* If you are using Qt5, you can either generate the ``.ts`` file of a specific
-  language with the command:
-
-  .. code:: console
-
-    make ts_qt-desktop-template_[your language code]
-
-  or generate all of them with the command:
-
-  .. code:: console
-
-    make ts_files_update
-
-  If, instead, you are using Qt6, run the following command to generate the
-  ``.ts`` file of each language:
+* Run the following command to generate the ``.ts`` file of each language:
 
   .. code:: console
 
@@ -103,8 +110,6 @@ Credits
 Software used for CI deployment:
 
 * `aqtinstall <https://github.com/miurahr/aqtinstall>`__
-
-* `install-qt-action <https://github.com/jurplel/install-qt-action>`__
 
 * `linuxdeployqt <https://github.com/probonopd/linuxdeployqt>`__
 

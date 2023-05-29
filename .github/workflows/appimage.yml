@@ -12,12 +12,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     env:
-      QTVER: 5.12.12
+      QTVER: 6.5.1
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Detect release tag
       run: |
@@ -31,47 +31,49 @@ jobs:
 
     - name: Cache Qt
       id: cache-qt
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ runner.workspace }}/Qt
         key: ${{ runner.os }}-cache-qt-${{ env.QTVER }}
 
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v2
-      with:
-        version: ${{ env.QTVER }}
-        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+    - name: Install dependencies
+      env:
+        QTDIR: ${{ runner.workspace }}/Qt
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -qy \
+          build-essential libgl1-mesa-dev libxkbcommon-x11-0 libpulse-dev \
+          libxcb-util1 libxcb-glx0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
+          libxcb-randr0 libxcb-render-util0 libxcb-render0 libxcb-shape0 \
+          libxcb-shm0 libxcb-sync1 libxcb-xfixes0 libxcb-xinerama0 libxcb1 \
+          libxcb-cursor0
+        if [ "${{ steps.cache-qt.outputs.cache-hit }}" != "true" ]; then
+          pip3 install aqtinstall
+          aqt install-qt -O $QTDIR linux desktop $QTVER gcc_64
+        fi
+        echo "$QTDIR/$QTVER/gcc_64/bin" >> $GITHUB_PATH
 
     - name: Build
       run: |
         mkdir build
         cd build
         cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
-        make -j2
+        make
         make install DESTDIR=appdir
 
     - name: Create AppImage
       working-directory: 'build'
-      env:
-        DESKTOP: appdir/usr/share/applications/qt-desktop-template.desktop
       run: |
         wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" -O linuxdeployqt
         chmod a+x linuxdeployqt
         unset QTDIR ; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
-        ./linuxdeployqt --appimage-extract-and-run ${{ env.DESKTOP }} -appimage
+        ./linuxdeployqt \
+          --appimage-extract-and-run \
+          appdir/usr/share/applications/qt-desktop-template.desktop \
+          -appimage
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: AppImage
         path: build/*.AppImage
-
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        prerelease: ${{ contains(github.ref, '-prerelease') }}
-        files: |
-          build/Qt_Desktop_Template-${{ env.VERSION }}-x86_64.AppImage
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -49,22 +49,22 @@
         <translation>Informazioni su Qt</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="29"/>
+        <location filename="../src/mainwindow.cpp" line="96"/>
         <source>About %1</source>
         <translation>Informazioni su %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="31"/>
+        <location filename="../src/mainwindow.cpp" line="100"/>
         <source>A template for creating Qt Widgets desktop applications.</source>
         <translation>Un modello per creare applicazioni desktop Qt Widgets.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="59"/>
+        <location filename="../src/mainwindow.cpp" line="54"/>
         <source>Settings</source>
         <translation>Impostazioni</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="62"/>
+        <location filename="../src/mainwindow.cpp" line="57"/>
         <source>Language (requires restart):</source>
         <translation>Lingua (richiede riavvio):</translation>
     </message>

@@ -17,6 +17,7 @@ public:
 
 public Q_SLOTS:
     void showSettings();
+    void showAbout();
 
 private:
     Ui::MainWindow *ui;

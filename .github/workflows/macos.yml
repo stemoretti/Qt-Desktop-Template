@@ -14,11 +14,10 @@ jobs:
   build:
     runs-on: macos-latest
     env:
-      QTVER: 6.2.2
-      APPLICATION: "Qt Desktop Template"
+      QTVER: 6.5.1
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Detect release tag
       run: |
@@ -32,49 +31,44 @@ jobs:
 
     - name: Cache Qt
       id: cache-qt
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ runner.workspace }}/Qt
         key: ${{ runner.os }}-cache-qt-${{ env.QTVER }}
 
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v2
-      with:
-        version: ${{ env.QTVER }}
-        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+    - name: Install dependencies
+      env:
+        QTDIR: ${{ runner.workspace }}/Qt
+      run: |
+        brew install cmake ninja
+        if [ "${{ steps.cache-qt.outputs.cache-hit }}" != "true" ]; then
+          pip3 install aqtinstall
+          aqt install-qt -O $QTDIR mac desktop $QTVER clang_64
+        fi
+        echo "$QTDIR/$QTVER/macos/bin" >> $GITHUB_PATH
 
     - name: Build
+      env:
+        MACOSX_DEPLOYMENT_TARGET: 11
       run: |
-        mkdir build
-        cd build
-        cmake -DCMAKE_BUILD_TYPE=Release ..
-        make -j2
+        cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+        cmake --build build
 
-    - name: Deploy
-      working-directory: 'build'
-      run: |
-        macdeployqt "${{ env.APPLICATION }}.app" -verbose=3
-
-    - name: Create Zip file
+    - name: Create dmg bundle and Zip file
       working-directory: 'build'
       env:
-        PACKAGE_FILENAME: Qt_Desktop_Template-${{ env.VERSION }}-macOS.zip
+        PACKAGE: Qt_Desktop_Template-${{ env.VERSION }}
+        APPLICATION: "Qt Desktop Template"
       run: |
-        ditto -c -k --sequesterRsrc --keepParent "${{ env.APPLICATION }}.app" $PACKAGE_FILENAME
-        echo "PACKAGE_FILENAME=$PACKAGE_FILENAME" >> $GITHUB_ENV
+        macdeployqt "${APPLICATION}.app" -verbose=3 -dmg
+        ditto -c -k --sequesterRsrc --keepParent "${APPLICATION}.app" "${PACKAGE}-macOS.zip"
+        mv *.dmg "$PACKAGE.dmg"
+        echo "PACKAGE=$PACKAGE" >> $GITHUB_ENV
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: MacOS-Bundle
-        path: build/${{ env.PACKAGE_FILENAME }}
-
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        prerelease: ${{ contains(github.ref, '-prerelease') }}
-        files: |
-          build/${{ env.PACKAGE_FILENAME }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        path: |
+          build/${{ env.PACKAGE }}-macOS.zip
+          build/${{ env.PACKAGE }}.dmg
