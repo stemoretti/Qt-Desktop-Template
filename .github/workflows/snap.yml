@@ -1,0 +1,34 @@
+name: Snap
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      snap-file: ${{ steps.build-snap.outputs.snap }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build snap
+      uses: snapcore/action-build@v1
+      id: build-snap
+
+    - name: Test snap
+      run: |
+        sudo snap install --dangerous ${{ steps.build-snap.outputs.snap }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Snap
+        path: ${{ steps.build-snap.outputs.snap }}

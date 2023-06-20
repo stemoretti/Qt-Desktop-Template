@@ -1,0 +1,71 @@
+name: qt-desktop-template
+version: "0.1.0"
+summary: Template application
+description: |
+  Template for creating Qt Widgets desktop applications.
+
+base: core22
+grade: stable
+confinement: strict
+
+architectures:
+  - amd64
+
+parts:
+  qt-desktop-template:
+    source: .
+    plugin: cmake
+    cmake-generator: Ninja
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+    build-packages:
+      - build-essential
+      - libgl1-mesa-dev
+      - libxkbcommon-dev
+      - qt6-base-dev
+      - qt6-l10n-tools
+      - qt6-tools-dev
+      - qt6-tools-dev-tools
+    stage-packages:
+      - libqt6core6
+      - libqt6gui6
+      - libqt6widgets6
+      - libx11-6
+      - libx11-xcb1
+      - libxcb1
+      - libxcb-cursor0
+      - libxcb-glx0
+      - libxcb-icccm4
+      - libxcb-image0
+      - libxcb-keysyms1
+      - libxcb-randr0
+      - libxcb-render0
+      - libxcb-render-util0
+      - libxcb-shape0
+      - libxcb-shm0
+      - libxcb-sync1
+      - libxcb-util1
+      - libxcb-xfixes0
+      - libxcb-xinerama0
+      - libxcb-xkb1
+      - libxkbcommon0
+      - libxkbcommon-x11-0
+      - qt6-gtk-platformtheme
+      - qt6-qpa-plugins
+      - qt6-translations-l10n
+      - qt6-wayland
+
+apps:
+  qt-desktop-template:
+    command: usr/bin/qt-desktop-template
+    desktop: usr/share/applications/qt-desktop-template.desktop
+    plugs:
+      - desktop
+      - desktop-legacy
+      - home
+      - unity7
+      - wayland
+      - x11
+    environment:
+      QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/usr/lib/x86_64-linux-gnu/qt6/plugins/platforms

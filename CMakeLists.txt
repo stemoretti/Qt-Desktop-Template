@@ -97,19 +97,6 @@ target_include_directories(qt-desktop-template
         "${PROJECT_BINARY_DIR}/include"
 )
 
-target_compile_options(qt-desktop-template
-    PRIVATE
-        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
-            -Wall
-            -Wextra
-            -Wpedantic
-        >
-
-        $<$<CXX_COMPILER_ID:MSVC>:
-            /W4
-        >
-)
-
 target_link_libraries(qt-desktop-template
     PRIVATE
         Qt::Core

@@ -20,9 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     setWindowTitle(PROJECT_DISPLAY_NAME);
-    setWindowIcon(
-        QIcon(Utils::resourcePath(DATAROOT_PATH)
-              + QString("/icons/hicolor/scalable/apps/%1.svg").arg(PROJECT_NAME)));
+    QString iconPath = QString("/icons/hicolor/scalable/apps/%1.svg").arg(PROJECT_NAME);
+    QApplication::setWindowIcon(QIcon(Utils::resourcePath(DATAROOT_PATH) + iconPath));
 
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::showSettings);

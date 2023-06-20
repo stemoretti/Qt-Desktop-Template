@@ -7,6 +7,9 @@
 .. image:: https://github.com/stemoretti/qt-desktop-template/actions/workflows/flatpak.yml/badge.svg
   :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflow%3AFlatpak
 
+.. image:: https://github.com/stemoretti/qt-desktop-template/actions/workflows/snap.yml/badge.svg
+  :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflow%3ASnap
+
 .. image:: https://github.com/stemoretti/qt-desktop-template/actions/workflows/windows.yml/badge.svg
   :target: https://github.com/stemoretti/qt-desktop-template/actions?query=workflow%3AWindows
 
@@ -89,7 +92,7 @@ To add languages, follow the steps below.
 
 * Add the translation's file path of the language you wish to support to the
   variable ``TS_FILES`` inside the file
-  `CMakeLists.txt <https://github.com/stemoretti/qt-desktop-template/blob/master/CMakeLists.txt#L120>`__.
+  `CMakeLists.txt <https://github.com/stemoretti/qt-desktop-template/blob/master/CMakeLists.txt#L107>`__.
 
 * Configure the project by running CMake.
 
