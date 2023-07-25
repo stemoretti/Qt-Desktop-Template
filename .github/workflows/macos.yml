@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: macos-latest
     env:
-      QTVER: 6.5.1
+      QTVER: 6.5.2
 
     steps:
     - uses: actions/checkout@v3
@@ -46,6 +46,7 @@ jobs:
           aqt install-qt -O $QTDIR mac desktop $QTVER clang_64
         fi
         echo "$QTDIR/$QTVER/macos/bin" >> $GITHUB_PATH
+        echo "QTROOT=$QTDIR/$QTVER/macos" >> $GITHUB_ENV
 
     - name: Build
       env:
@@ -58,10 +59,17 @@ jobs:
       working-directory: 'build'
       env:
         PACKAGE: Qt_Desktop_Template-${{ env.VERSION }}
-        APPLICATION: "Qt Desktop Template"
+        APP: "Qt Desktop Template.app"
       run: |
-        macdeployqt "${APPLICATION}.app" -verbose=3 -dmg
-        ditto -c -k --sequesterRsrc --keepParent "${APPLICATION}.app" "${PACKAGE}-macOS.zip"
+        mkdir -p "$APP/Contents/translations"
+        cp $QTROOT/translations/qt_*.qm "$APP/Contents/translations"
+        cp $QTROOT/translations/qtbase_*.qm "$APP/Contents/translations"
+        mkdir -p "$APP/Contents/Resources/translations"
+        cp translations/*.qm "$APP/Contents/Resources/translations"
+        mkdir -p "$APP/Contents/Resources/icons"
+        cp ../packaging/qt-desktop-template.svg "$APP/Contents/Resources/icons"
+        macdeployqt "$APP" -verbose=3 -dmg
+        ditto -c -k --sequesterRsrc --keepParent "$APP" "${PACKAGE}-macOS.zip"
         mv *.dmg "$PACKAGE.dmg"
         echo "PACKAGE=$PACKAGE" >> $GITHUB_ENV
 

@@ -19,6 +19,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Prepare snap files
+      run: |
+        mv packaging/linux/snap .
+        mkdir snap/gui
+        cp packaging/linux/icons/hicolor/64x64/apps/qt-desktop-template.png snap/gui
+        cp packaging/linux/qt-desktop-template.desktop snap/gui
+        cd snap/gui
+        sed -i 's|Icon=.*|Icon=${SNAP}/meta/gui/qt-desktop-template.png|' qt-desktop-template.desktop
+
     - name: Build snap
       uses: snapcore/action-build@v1
       id: build-snap

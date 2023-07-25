@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     env:
-      QTVER: 6.5.1
+      QTVER: 6.5.2
 
     steps:
     - uses: actions/checkout@v3

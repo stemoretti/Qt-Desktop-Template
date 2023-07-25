@@ -40,7 +40,7 @@ Source: "{#MyAppDir}\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 Source: "{#MyAppDir}\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion
 Source: "{#MyAppDir}\iconengines\*"; DestDir: "{app}\iconengines"; Flags: ignoreversion
-Source: "{#MyAppDir}\icons\*"; DestDir: "{app}\icons"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#MyAppDir}\icons\*"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "{#MyAppDir}\imageformats\*"; DestDir: "{app}\imageformats"; Flags: ignoreversion
 Source: "{#MyAppDir}\platforms\*"; DestDir: "{app}\platforms"; Flags: ignoreversion
 Source: "{#MyAppDir}\styles\*"; DestDir: "{app}\styles"; Flags: ignoreversion

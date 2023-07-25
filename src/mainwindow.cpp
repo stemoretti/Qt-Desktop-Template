@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QApplication>
 #include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -20,18 +21,20 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     setWindowTitle(PROJECT_DISPLAY_NAME);
-    QString iconPath = QString("/icons/hicolor/scalable/apps/%1.svg").arg(PROJECT_NAME);
+    QString iconPath = QString("%1.svg").arg(PROJECT_NAME);
+#ifdef Q_OS_LINUX
+    iconPath = "/icons/hicolor/scalable/apps/" + iconPath;
+#else
+    iconPath = "/icons/" + iconPath;
+#endif
     QApplication::setWindowIcon(QIcon(Utils::resourcePath(DATAROOT_PATH) + iconPath));
 
     connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::showSettings);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
-    connect(ui->actionAbout_Qt, &QAction::triggered, this, [this]() {
-        QMessageBox::aboutQt(this);
-    });
+    connect(ui->actionAbout_Qt, &QAction::triggered, this, &QApplication::aboutQt);
 
     QSettings settings;
-
     if (settings.value("windowGeometry").isValid())
         restoreGeometry(settings.value("windowGeometry").toByteArray());
 }
@@ -39,7 +42,6 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     QSettings settings;
-
     settings.setValue("windowGeometry", saveGeometry());
 
     delete ui;

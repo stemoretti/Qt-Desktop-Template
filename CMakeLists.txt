@@ -5,8 +5,6 @@ project(qt-desktop-template VERSION 0.1.0 LANGUAGES CXX)
 set(PROJECT_DISPLAY_NAME "Qt Desktop Template")
 set(PROJECT_URL "https://github.com/stemoretti/qt-desktop-template")
 
-include(GNUInstallDirs)
-
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
@@ -15,31 +13,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt6 COMPONENTS Core Gui Widgets LinguistTools REQUIRED)
 
-# Installation paths
-if(APPLE)
-    set(INSTALL_DATAROOT     "Resources")
-    set(INSTALL_BIN          "MacOS")
-    set(INSTALL_DOC          "${INSTALL_DATAROOT}/doc")
-    set(INSTALL_DATA         "${INSTALL_DATAROOT}")
-    set(INSTALL_TRANSLATIONS "${INSTALL_DATAROOT}/translations")
-elseif(UNIX)
-    set(INSTALL_DATAROOT     "${CMAKE_INSTALL_DATAROOTDIR}")
-    set(INSTALL_BIN          "${CMAKE_INSTALL_BINDIR}")
-    set(INSTALL_DOC          "${CMAKE_INSTALL_DOCDIR}")
-    set(INSTALL_DATA         "${CMAKE_INSTALL_DATAROOTDIR}/qt-desktop-template")
-    set(INSTALL_TRANSLATIONS "${INSTALL_DATA}/translations")
-else()
-    # Install into local directory
-    set(INSTALL_DATAROOT     ".")
-    set(INSTALL_BIN          ".")
-    set(INSTALL_DOC          "doc")
-    set(INSTALL_DATA         ".")
-    set(INSTALL_TRANSLATIONS "translations")
-endif()
-
-add_subdirectory(res)
-
-add_executable(qt-desktop-template
+qt_add_executable(qt-desktop-template
     src/main.cpp
     src/mainwindow.h
     src/mainwindow.cpp
@@ -50,38 +24,59 @@ add_executable(qt-desktop-template
 )
 
 if(WIN32)
-    set(RESOURCES "${PROJECT_SOURCE_DIR}/res/icon.rc")
+    # Install into local directory
+    set(INSTALL_DATAROOT     ".")
+    set(INSTALL_BIN          ".")
+    set(INSTALL_DOC          "doc")
+    set(INSTALL_DATA         ".")
+    set(INSTALL_TRANSLATIONS "translations")
+
+    target_sources(qt-desktop-template PRIVATE "${PROJECT_SOURCE_DIR}/packaging/windows/icon.rc")
 
     set_target_properties(qt-desktop-template PROPERTIES WIN32_EXECUTABLE TRUE)
 
-    configure_file("${PROJECT_SOURCE_DIR}/cmake/installer.iss.in" "${PROJECT_BINARY_DIR}/installer.iss")
-endif()
+    configure_file(
+        "${PROJECT_SOURCE_DIR}/packaging/windows/installer.iss.in"
+        "${PROJECT_BINARY_DIR}/installer.iss"
+    )
 
-if(APPLE)
-    set(RESOURCES "${PROJECT_SOURCE_DIR}/res/Icon.icns")
-    set_source_files_properties("${RESOURCES}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    install(TARGETS qt-desktop-template
+        RUNTIME DESTINATION "${INSTALL_BIN}" COMPONENT runtime
+    )
+elseif(APPLE)
+    set(INSTALL_DATAROOT     "Resources")
+    set(INSTALL_BIN          "MacOS")
+    set(INSTALL_DOC          "${INSTALL_DATAROOT}/doc")
+    set(INSTALL_DATA         "${INSTALL_DATAROOT}")
+    set(INSTALL_TRANSLATIONS "${INSTALL_DATAROOT}/translations")
+
+    set(ICON "${PROJECT_SOURCE_DIR}/packaging/macos/Icon.icns")
+    set_source_files_properties("${ICON}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    target_sources(qt-desktop-template PRIVATE ${ICON})
 
     set_target_properties(qt-desktop-template PROPERTIES
         OUTPUT_NAME "${PROJECT_DISPLAY_NAME}"
         MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/packaging/macos/Info.plist.in"
     )
-    add_custom_command(TARGET qt-desktop-template POST_BUILD
-        COMMAND "${CMAKE_COMMAND}" -E copy_directory
-                "${PROJECT_BINARY_DIR}/translations"
-                "${PROJECT_BINARY_DIR}/${PROJECT_DISPLAY_NAME}.app/Contents/Resources/translations"
-        COMMENT "Copying translation files into the bundle 'Resources' folder"
-        VERBATIM
-    )
-    add_custom_command(TARGET qt-desktop-template POST_BUILD
-        COMMAND "${CMAKE_COMMAND}" -E copy_directory
-                "${PROJECT_SOURCE_DIR}/res/icons"
-                "${PROJECT_BINARY_DIR}/${PROJECT_DISPLAY_NAME}.app/Contents/Resources/icons"
-        COMMENT "Copying icons files into the bundle 'Resources' folder"
-        VERBATIM
+
+    install(TARGETS qt-desktop-template BUNDLE DESTINATION "." COMPONENT runtime)
+elseif(UNIX)
+    include(GNUInstallDirs)
+    set(INSTALL_DATAROOT     "${CMAKE_INSTALL_DATAROOTDIR}")
+    set(INSTALL_BIN          "${CMAKE_INSTALL_BINDIR}")
+    set(INSTALL_DOC          "${CMAKE_INSTALL_DOCDIR}")
+    set(INSTALL_DATA         "${CMAKE_INSTALL_DATAROOTDIR}/qt-desktop-template")
+    set(INSTALL_TRANSLATIONS "${INSTALL_DATA}/translations")
+
+    add_subdirectory(packaging/linux)
+
+    install(TARGETS qt-desktop-template
+        RUNTIME DESTINATION "${INSTALL_BIN}" COMPONENT runtime
     )
 endif()
 
-target_sources(qt-desktop-template PRIVATE ${RESOURCES})
+configure_file("${PROJECT_SOURCE_DIR}/src/appinfo.h.in" "${PROJECT_BINARY_DIR}/include/appinfo.h")
 
 set_target_properties(qt-desktop-template
     PROPERTIES
@@ -89,8 +84,6 @@ set_target_properties(qt-desktop-template
         CXX_STANDARD_REQUIRED     YES
         CXX_EXTENSIONS            NO
 )
-
-configure_file("${PROJECT_SOURCE_DIR}/cmake/appinfo.h.in" "${PROJECT_BINARY_DIR}/include/appinfo.h")
 
 target_include_directories(qt-desktop-template
     PRIVATE
@@ -119,11 +112,6 @@ qt_add_translations(qt-desktop-template
 )
 
 install(FILES ${QM_FILES} DESTINATION "${INSTALL_TRANSLATIONS}" COMPONENT runtime)
-
-install(TARGETS qt-desktop-template
-    RUNTIME DESTINATION "${INSTALL_BIN}" COMPONENT runtime
-    BUNDLE DESTINATION "." COMPONENT runtime
-)
 
 install(FILES
     LICENSE

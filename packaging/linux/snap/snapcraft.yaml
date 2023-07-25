@@ -1,6 +1,6 @@
 name: qt-desktop-template
 version: "0.1.0"
-summary: Template application
+summary: Template for creating Qt Widgets desktop applications.
 description: |
   Template for creating Qt Widgets desktop applications.
 
@@ -54,7 +54,6 @@ parts:
       - qt6-gtk-platformtheme
       - qt6-qpa-plugins
       - qt6-translations-l10n
-      - qt6-wayland
 
 apps:
   qt-desktop-template:
